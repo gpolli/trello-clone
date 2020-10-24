@@ -3,7 +3,7 @@ import React from 'react';
 import './style.scss';
 
 interface ColumnProps {
-  text?: string
+  text: string
 }
 
 const Column = ({ text, children }: React.PropsWithChildren<ColumnProps>) => {
