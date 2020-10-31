@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 /* Context */
 import { useAppState } from '../../context/AppStateContext';
 /* Components */
 import Card from '../Card';
 import AddNewItem from '../AddNewItem';
+/* Utils */
+import { useItemDrag } from '../../utils/useItemDrag';
 /* CSS */
 import './style.scss';
 
@@ -15,9 +17,13 @@ interface ColumnProps {
 
 const Column = ({ text, index, id }: ColumnProps) => {
   const { state, dispatch } = useAppState();
+  const ref = useRef<HTMLDivElement>(null);
+  const { drag } = useItemDrag({ type: "COLUMN", text, index, id });
+
+  drag(ref)
 
   return (
-    <section className="column">
+    <div className="column" ref={ref}>
       <div className="column__container">
         <div className="column__title">{text}</div>
         {state.lists[index].tasks.map(task => (
@@ -25,7 +31,7 @@ const Column = ({ text, index, id }: ColumnProps) => {
         ))}
         <AddNewItem toggleButtonText="+ Add another task" onAdd={text => dispatch({ type: "ADD_TASK", payload: { text, listId: id } })} dark />
       </div>
-    </section>
+    </div>
   );
 }
 
