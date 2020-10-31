@@ -85,20 +85,6 @@ const appData: AppState = {
 
 const AppStateContext = createContext<AppStateContextProps>({} as AppStateContextProps);
 
-export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
-  const [state, dispatch] = useReducer(appStateReducer, appData);
-
-  return (
-    <AppStateContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppStateContext.Provider>
-  );
-}
-
-export const useAppState = () => {
-  return useContext(AppStateContext);
-}
-
 const appStateReducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
     case 'ADD_LIST': {
@@ -144,4 +130,18 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       return state;
     }
   }
+}
+
+export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
+  const [state, dispatch] = useReducer(appStateReducer, appData);
+
+  return (
+    <AppStateContext.Provider value={{ state, dispatch }}>
+      {children}
+    </AppStateContext.Provider>
+  );
+}
+
+export const useAppState = () => {
+  return useContext(AppStateContext);
 }

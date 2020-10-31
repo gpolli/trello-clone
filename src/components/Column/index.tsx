@@ -1,11 +1,14 @@
 import React, { useRef } from 'react';
+import { useDrop } from 'react-dnd';
 /* Context */
 import { useAppState } from '../../context/AppStateContext';
+/* Utils */
+import { DragItem } from '../../utils/dragItem';
+import { useItemDrag } from '../../utils/useItemDrag';
+import { isHidden } from '../../utils/isHidden';
 /* Components */
 import Card from '../Card';
 import AddNewItem from '../AddNewItem';
-/* Utils */
-import { useItemDrag } from '../../utils/useItemDrag';
 /* CSS */
 import './style.scss';
 
@@ -18,12 +21,40 @@ interface ColumnProps {
 const Column = ({ text, index, id }: ColumnProps) => {
   const { state, dispatch } = useAppState();
   const ref = useRef<HTMLDivElement>(null);
-  const { drag } = useItemDrag({ type: "COLUMN", text, index, id });
+  const { drag } = useItemDrag({ type: "COLUMN", id, index, text });
+  const [, drop] = useDrop({
+    accept: "COLUMN",
+    collect: monitor => {
+      // Without it the drop doesn't work
+      return {
+        isOver: !!monitor.isOver(),
+      }
+    },
+    hover(item: DragItem, monitor) {
+      if (item.type === "COLUMN") {
+        const dragIndex = item.index;
+        const hoverIndex = index;
 
-  drag(ref)
+        if (dragIndex === hoverIndex) {
+          return;
+        }
+
+        dispatch({
+          type: "MOVE_LIST",
+          payload: {
+            dragIndex, hoverIndex
+          }
+        });
+
+        item.index = hoverIndex;
+      }
+    },
+  });
+
+  drag(drop(ref));
 
   return (
-    <div className="column" ref={ref}>
+    <div className={`column ${isHidden(state.draggedItem, "COLUMN", id) ? "column--is-hidden" : ""}`} ref={ref}>
       <div className="column__container">
         <div className="column__title">{text}</div>
         {state.lists[index].tasks.map(task => (

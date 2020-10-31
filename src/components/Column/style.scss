@@ -1,12 +1,15 @@
 .column {
-  &__container {
-    width: 300px;
-    min-height: 40px;
-    flex-grow: 0;
-    margin-right: 20px;
-    padding: 8px;
-    background-color: #ebecf0;
-    border-radius: 3px;
+  width: 300px;
+  min-height: 40px;
+  flex-grow: 0;
+  margin-right: 20px;
+  padding: 8px;
+  background-color: #ebecf0;
+  border-radius: 3px;
+  opacity: 1;
+
+  &--is-hidden {
+    opacity: 0.3;
   }
 
   &__title {
