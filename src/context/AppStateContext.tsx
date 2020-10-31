@@ -1,4 +1,8 @@
 import React, { createContext, useReducer, useContext } from 'react';
+import { nanoid } from 'nanoid';
+/* Utils */
+import { findItemIndexById } from '../utils/findItemIndexById';
+// import { moveItem } from '../utils/moveItem';
 
 interface Task {
   id: string,
@@ -17,7 +21,28 @@ export interface AppState {
 
 interface AppStateContextProps {
   state: AppState,
+  dispatch: React.Dispatch<Action>
 }
+
+type Action =
+  | {
+    type: "ADD_LIST",
+    payload: string
+  }
+  | {
+    type: "ADD_TASK",
+    payload: {
+      text: string,
+      listId: string,
+    }
+  }
+// | {
+//   type: "MOVE_LIST",
+//   payload: {
+//     dragIndex: number,
+//     hoverIndex: number,
+//   }
+// };
 
 const appData: AppState = {
   lists: [
@@ -54,8 +79,10 @@ const appData: AppState = {
 const AppStateContext = createContext<AppStateContextProps>({} as AppStateContextProps);
 
 export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
+  const [state, dispatch] = useReducer(appStateReducer, appData);
+
   return (
-    <AppStateContext.Provider value={{ state: appData }}>
+    <AppStateContext.Provider value={{ state, dispatch }}>
       {children}
     </AppStateContext.Provider>
   );
@@ -63,4 +90,45 @@ export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
 
 export const useAppState = () => {
   return useContext(AppStateContext);
+}
+
+const appStateReducer = (state: AppState, action: Action): AppState => {
+  switch (action.type) {
+    case 'ADD_LIST': {
+      return {
+        ...state,
+        lists: [
+          ...state.lists,
+          {
+            id: nanoid(),
+            text: action.payload,
+            tasks: []
+          }
+        ]
+      };
+    }
+    case 'ADD_TASK': {
+      const targetLaneIndex = findItemIndexById(state.lists, action.payload.listId);
+
+      // !Push is legal?
+      state.lists[targetLaneIndex].tasks.push({
+        id: nanoid(),
+        text: action.payload.text,
+      });
+
+      return {
+        ...state
+      };
+    }
+    // case 'MOVE_LIST': {
+    //   const { dragIndex, hoverIndex } = action.payload;
+
+    //   state.lists = moveItem(state.lists, dragIndex, hoverIndex);
+
+    //   return { ...state };
+    // }
+    // default: {
+    //   return state;
+    // }
+  }
 }
