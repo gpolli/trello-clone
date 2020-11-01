@@ -1,11 +1,14 @@
 .card {
-  &__container {
-    max-width: 300px;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #fff;
-    border-radius: 3px;
-    box-shadow: #091e4240 0px 1px 0px 0px;
-    cursor: pointer;
+  max-width: 300px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: #091e4240 0px 1px 0px 0px;
+  opacity: 1;
+  cursor: pointer;
+  
+  &--is-hidden {
+    opacity: 0.3;
   }
 }

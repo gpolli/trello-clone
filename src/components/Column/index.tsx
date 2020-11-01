@@ -57,8 +57,14 @@ const Column = ({ text, index, id }: ColumnProps) => {
     <div className={`column ${isHidden(state.draggedItem, "COLUMN", id) ? "column--is-hidden" : ""}`} ref={ref}>
       <div className="column__container">
         <div className="column__title">{text}</div>
-        {state.lists[index].tasks.map(task => (
-          <Card text={task.text} key={task.id} />
+        {state.lists[index].tasks.map((task, i) => (
+          <Card
+            id={task.id}
+            columnId={id}
+            text={task.text}
+            index={i}
+            key={task.id}
+          />
         ))}
         <AddNewItem toggleButtonText="+ Add another task" onAdd={text => dispatch({ type: "ADD_TASK", payload: { text, listId: id } })} dark />
       </div>
